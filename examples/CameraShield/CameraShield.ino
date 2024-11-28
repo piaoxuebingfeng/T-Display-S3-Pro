@@ -16,6 +16,8 @@
 #include <XPowersLib.h>
 #include <AceButton.h>
 #include "utilities.h"
+#include "ESP32_OV5640_AF.h"
+
 
 using namespace ace_button;
 
@@ -85,6 +87,9 @@ void buttonHandler(void *)
         delay(5);
     }
 }
+
+
+OV5640 ov5640 = OV5640();
 
 void setup()
 {
@@ -165,6 +170,19 @@ void setup()
         }
         if (s->id.PID == GC0308_PID) {
             s->set_vflip(s, 0);
+            s->set_hmirror(s, 0);
+        }
+        if (s->id.PID == OV5640_PID)
+        {
+            ov5640.start(s);
+            if (ov5640.focusInit() == 0) {
+                Serial.println("OV5640_Focus_Init Successful!");
+            }
+
+            if (ov5640.autoFocusMode() == 0) {
+                Serial.println("OV5640_Auto_Focus Successful!");
+            }
+            s->set_vflip(s, 1);
             s->set_hmirror(s, 0);
         }
     }
